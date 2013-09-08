@@ -1,9 +1,14 @@
 name: WolvesVSPigs
 main: io.github.fourohfour.wolvesvspigs.WolvesVSPigs
-version: 0.3.6
+version: 0.3.7
 commands:
   wvpa:
     description: Admin commands for the Wolves VS Pigs Plugin
     usage: /wvpa [command ex. help]
     permission: WolvesVSPigs.admin
     permission-message: You are not a WVP admin.
+  wvp:
+    description: Basic commands for the Wolves VS Pigs Plugin
+    usage: /wvp [command ex. help]
+    permission: WolvesVSPigs.basic
+    permission-message: You do not have permission to perform WVP commands.

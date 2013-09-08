@@ -40,8 +40,12 @@ public class Countdown {
                     return false;
                 }
             } else if ((d % 10) == 0){
-                for (int iplayer = 0; iplayer< Bukkit.getOnlinePlayers().length; iplayer++) {
+            	Player[] onlineps = Bukkit.getOnlinePlayers();
+                for (int iplayer = 0; iplayer < onlineps.length; iplayer++) {
                     Player reciever = Bukkit.getOnlinePlayers()[iplayer];
+                    if (players.getPlayerTeam(reciever)== null){
+                    	return true;
+                    }
                     Team pteam = players.getPlayerTeam(reciever);
                     String pteamn = pteam.getName();
                     if (pteamn == "Pigs"){
