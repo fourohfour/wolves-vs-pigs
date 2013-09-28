@@ -10,14 +10,11 @@ import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
 
 public class Countdown {
-    public static void tele() {
-        for (int p = 0; p < Bukkit.getOnlinePlayers().length; p++) {
-            Player target = Bukkit.getOnlinePlayers()[p];
+    public static void tele(Player p) {
             Location centre = new Location(Bukkit.getWorld("world"), 0, 70, 0);
-            target.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100, 5));
-            target.teleport(centre);
+            p.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100, 5));
+            p.teleport(centre);
         }
-    }
     public static boolean count(int c, String time, int factor, String[] reason, Boolean comp){
         ScoreboardManager manager = Bukkit.getScoreboardManager();
         Scoreboard players = manager.getMainScoreboard();
@@ -39,7 +36,7 @@ public class Countdown {
                 } catch (InterruptedException e) {
                     return false;
                 }
-            } else if ((d % 10) == 0){
+            } else if (((d % 10) == 0) || (d == c)){
             	Player[] onlineps = Bukkit.getOnlinePlayers();
                 for (int iplayer = 0; iplayer < onlineps.length; iplayer++) {
                     Player reciever = Bukkit.getOnlinePlayers()[iplayer];

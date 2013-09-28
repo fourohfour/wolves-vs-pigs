@@ -15,14 +15,20 @@ public class WvpCommandExecutor implements CommandExecutor{
 
 	@Override
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+		if (args.length == 0){
+			return false;
+		}
 		String a = args[0];
-		if (a.equals("help")) {
+		if (a.equalsIgnoreCase("help")) {
 		    sender.sendMessage("§2" + "=-=-=Wolves VS Pigs Help=-=-=" + "§r");
 		    String[] bhelparray = {"§2" + "/wvp help - displays help" + "§r"};
-		    String[] ahelparray = {"§2" + "/wvpa start - Starts the game" + "§r","§2" + "/wvpa stop - Stops the game" + "§r"};
+		    String[] ahelparray = {"§2" + "/wvpa start <time> - Starts the game. You can add a custom timer." + "§r","§2" + "/wvpa stop - Stops the game" + "§r", "§2" + "/wvpa nogb <Player> <-m> - Player cannot break glass. Use -m to target self." + "§r","§2" + "/wvpa gb <Player> <-m>- Player can break glass. Use -m to target self." + "§r"};
+		    String[] dhelparray = {"§2" + "/wvpd notp <Player> <-m> - Player will not be teleported ingame. Use -m to target self." + "§r","§2" + "/wvpd tp <Player> <-m>- Player be teleported ingame. Use -m to target self." + "§r"};
 		    sender.sendMessage(bhelparray);
 		    if (sender.hasPermission("WolvesVSPigs.admin")){
 			    sender.sendMessage(ahelparray);
+		    } if (sender.hasPermission("WolvesVSPigs.dev")){
+		    	sender.sendMessage(dhelparray);
 		    }
 		    return true;
 		}
