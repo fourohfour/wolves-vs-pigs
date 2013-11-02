@@ -8,5 +8,18 @@ public class Resources {
 		  }
 		  return str;
 		}
-
+	public static Boolean StrToBoolean(String str) {
+		if (str.equalsIgnoreCase("True")){
+			Boolean val = true;
+			return val;
+		} else if (str.equalsIgnoreCase("False")){
+			Boolean val = false;
+			return val;
+		}
+		return null;
+	}
+	public static void setGlobalsToDefaults(){
+		Globals.globalvars.put("gamestage", "none");
+		Globals.globalvars.put("cleft", 0);
+	}
 }

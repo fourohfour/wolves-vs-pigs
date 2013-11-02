@@ -2,7 +2,9 @@ package io.github.fourohfour.wolvesvspigs;
 
 import java.util.ArrayList;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Color;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
@@ -81,5 +83,11 @@ public class Kit {
         result.setItemMeta(meta);
        
         return result;
+    }
+    
+    public static void tele(Player p) {
+        Location centre = new Location(Bukkit.getWorld("world"), 0, 70, 0);
+        p.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100, 5));
+        p.teleport(centre);
     }
 }

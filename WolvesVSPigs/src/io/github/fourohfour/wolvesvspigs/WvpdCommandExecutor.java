@@ -1,5 +1,6 @@
 package io.github.fourohfour.wolvesvspigs;
 
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -21,56 +22,38 @@ public class WvpdCommandExecutor implements CommandExecutor{
 			return false;
 		}
 		String a = args[0];
-		if (a.equalsIgnoreCase("notp")){
-			if (args.length == 1){
-				String[] ms = {"§2" + "Use \"/wvpd notp -m\" to not get teleported ingame." + "§r","§2" +  "Use \"/wvpd notp [Player]\" to stop a player being teleported ingame." + "§r"};
-				sender.sendMessage(ms);
+		if (a.equalsIgnoreCase("getGlobalVar")){
+			if (args.length<2){
+				sender.sendMessage("§2" + "Please state a global value to get the value of." + "§r");
 				return true;
 			}
-		    String b = args[1];
-		    if (b.equalsIgnoreCase("-m")){
-				Player target = (Player) sender;
-				target.setMetadata("notele", new FixedMetadataValue(plugin, true));
-				target.sendMessage("§2" + "You will now not be teleported ingame");
-				return true;
-		    } else if (true){
-			    for (int pindex = 0; pindex< Bukkit.getOnlinePlayers().length; pindex++){
-			        if (Bukkit.getServer().getPlayer(b) == Bukkit.getOnlinePlayers()[pindex]){
-					    Player target = Bukkit.getOnlinePlayers()[pindex];
-					    target.setMetadata("notele", new FixedMetadataValue(plugin, true));
-			 		    sender.sendMessage("§2" + target.getName() + " will now not be teleported ingame" + "§r");
-			    		return true;
-		    	    }
-		    	}
-			    sender.sendMessage("§2" + b + " is not online. Do /wvp help to view help." + "§r");
-    		}
-	    } else if (a.equalsIgnoreCase("tp")){
-			if (args.length == 1){
-				String[] ms = {"§2" + "Use \"/wvpd tp -m\" to get teleported ingame." + "§r","§2" +  "Use \"/wvpd tp [Player]\" to let a player teleported ingame." + "§r"};
-				sender.sendMessage(ms);
+			String b = args[1];
+			String bval = Globals.globalvars.get(b).toString();
+			sender.sendMessage(bval);
+			return true;
+		}
+		if (a.equalsIgnoreCase("setCountdownTime")){
+			if (args.length<2){
+				sender.sendMessage("§2" + "Please state parameters - countdown runtime factor." + "§r");
 				return true;
 			}
-		    String b = args[1];
-		    if (b.equalsIgnoreCase("-m")){
-				Player target = (Player) sender;
-				target.setMetadata("notele", new FixedMetadataValue(plugin, false));
-				target.sendMessage("§2" + "You will now be teleported ingame");
-				return true;
-		    } else if (true){
-			    for (int pindex = 0; pindex< Bukkit.getOnlinePlayers().length; pindex++){
-			        if (Bukkit.getServer().getPlayer(b) == Bukkit.getOnlinePlayers()[pindex]){
-					    Player target = Bukkit.getOnlinePlayers()[pindex];
-					    target.setMetadata("notele", new FixedMetadataValue(plugin, false));
-			 		    sender.sendMessage("§2" + target.getName() + " will now be teleported ingame" + "§r");
-			    		return true;
-		    	    }
-		    	}
-			    sender.sendMessage("§2" + b + " is not online. Do /wvp help to view help." + "§r");
-    		}
-	    } else if (a.equalsIgnoreCase("help")){
-	    	sender.sendMessage("§2" + "Do \"/wvp help\" to view help." + "§r");
-	    	return true;
-	    }
+			Integer[] argumentl = {Integer.parseInt(args[2]), Integer.parseInt(args[3])};
+			Globals.cdpresets.put(args[1], argumentl);
+			return true;
+		}
+		if (a.equalsIgnoreCase("getCountdownTime")){
+			sender.sendMessage(Globals.cdpresets.get(args[1])[0].toString() + " " + Globals.cdpresets.get(args[1])[1].toString());
+			return true;
+		}
+	if (a.equalsIgnoreCase("setbasemeta")){
+		String b = args[1];
+		Player target = Bukkit.getPlayer(b);
+		target.setMetadata("IngameTP", new FixedMetadataValue(plugin, true));
+		target.setMetadata("CanBreakGlass", new FixedMetadataValue(plugin, false));
+		target.setMetadata("CanPlaceGlass", new FixedMetadataValue(plugin, false));
+		target.setMetadata("CanBreakBlocksPreGame", new FixedMetadataValue(plugin, false));
+		return true;
+	}
 		return false;
 }
 }

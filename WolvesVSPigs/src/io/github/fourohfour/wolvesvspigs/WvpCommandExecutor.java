@@ -21,16 +21,43 @@ public class WvpCommandExecutor implements CommandExecutor{
 		String a = args[0];
 		if (a.equalsIgnoreCase("help")) {
 		    sender.sendMessage("§2" + "=-=-=Wolves VS Pigs Help=-=-=" + "§r");
-		    String[] bhelparray = {"§2" + "/wvp help - displays help" + "§r"};
-		    String[] ahelparray = {"§2" + "/wvpa start <time> - Starts the game. You can add a custom timer." + "§r","§2" + "/wvpa stop - Stops the game" + "§r", "§2" + "/wvpa nogb <Player> <-m> - Player cannot break glass. Use -m to target self." + "§r","§2" + "/wvpa gb <Player> <-m>- Player can break glass. Use -m to target self." + "§r"};
-		    String[] dhelparray = {"§2" + "/wvpd notp <Player> <-m> - Player will not be teleported ingame. Use -m to target self." + "§r","§2" + "/wvpd tp <Player> <-m>- Player be teleported ingame. Use -m to target self." + "§r"};
+		    
+		    String[] tiparray = {
+		    	"§2" + "TIPS:" + "§r",
+		    	"§2" + "When Targeting a Player, use their name or use -m to target oneself." + "§r",
+		        };
+		    
+		    String[] bhelparray = {
+			    "§2" + "BASIC COMMANDS:" + "§r",
+		    	"§2" + "/wvp help - displays help" + "§r",
+		    	"§2" + "/wvp timeleft - how long is left on the timer" + "§r"
+		        };
+		    
+		    String[] ahelparray = {
+			    "§2" + "ADMIN COMMANDS:" + "§r",
+		    	"§2" + "/wvpa start <time> - Starts the game. You can add a custom timer." + "§r",
+		    	"§2" + "/wvpa stop - Stops the game" + "§r",
+		    	"§2" + "/wvpa cp [Preference] [Value] [Target] - Change Preference" + "§r",
+		    	"§2" + "/wvpa lp <Target> - Lists all Preferences. Add Target to view a player's values." + "§r"
+		    	};
+		    
+		    String[] dhelparray = {
+			    "§2" + "DEV COMMANDS:" + "§r",
+		    	"§2" + "/wvpd getGameStage - Gets the current gamestage." + "§r"
+		        };
+		    
 		    sender.sendMessage(bhelparray);
 		    if (sender.hasPermission("WolvesVSPigs.admin")){
 			    sender.sendMessage(ahelparray);
 		    } if (sender.hasPermission("WolvesVSPigs.dev")){
 		    	sender.sendMessage(dhelparray);
 		    }
+		    sender.sendMessage(tiparray);
 		    return true;
+		}
+		if (a.equalsIgnoreCase("timeleft")) {
+			sender.sendMessage("§2" + Globals.globalvars.get("cleft").toString() + "§r");
+			return true;
 		}
 		return false;
 	}
