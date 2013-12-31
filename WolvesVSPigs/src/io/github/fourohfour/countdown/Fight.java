@@ -3,6 +3,7 @@ package io.github.fourohfour.countdown;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.scoreboard.Scoreboard;
+
 import io.github.fourohfour.devcountdown.Countdown;
 import io.github.fourohfour.devcountdown.Tick;
 import io.github.fourohfour.wolvesvspigs.GameStateChangeEvent;
@@ -34,13 +35,12 @@ public class Fight extends Countdown{
 
 	public void onEnd() {
 		Bukkit.broadcastMessage("§2Game Over!§r");
-		Bukkit.broadcastMessage("§2Game Starting!§r");
-		Globals.globalvars.put("gamestage", "prepare");
+		Globals.globalvars.put("gamestage", "none");
 		GameStateChangeEvent event = new GameStateChangeEvent();
 		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
 	public void onCancel() {
-		Bukkit.broadcastMessage("§2Game Cancelled.§r");
+		Bukkit.getServer().getLogger().info("Countdown id=\"fight\" cancelled");
 	}
 }

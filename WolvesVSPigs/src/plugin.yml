@@ -1,7 +1,7 @@
 name: WolvesVSPigs
 author: FourOhFour
 main: io.github.fourohfour.wolvesvspigs.WolvesVSPigs
-version: pre-0.6 #1
+version: 0.6
 commands:
   wvpa:
     description: Admin commands for the Wolves VS Pigs Plugin

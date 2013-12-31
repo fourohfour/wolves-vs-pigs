@@ -30,7 +30,7 @@ public class PreGame extends Countdown {
 	}
 
 	public void onCancel() {
-		Bukkit.broadcastMessage("§2Game Cancelled.§r");
+		Bukkit.getServer().getLogger().info("Countdown id=\"pregame\" cancelled");
 	}
 	
 }

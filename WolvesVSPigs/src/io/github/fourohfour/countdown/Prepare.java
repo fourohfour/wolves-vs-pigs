@@ -22,13 +22,12 @@ public class Prepare extends Countdown{
 
 	public void onEnd() {
 		Bukkit.broadcastMessage("§2It's time to fight!§r");
-		Bukkit.broadcastMessage("§2Game Starting!§r");
 		Globals.globalvars.put("gamestage", "fight");
 		GameStateChangeEvent event = new GameStateChangeEvent();
 		Bukkit.getServer().getPluginManager().callEvent(event);
 	}
 
 	public void onCancel() {
-		Bukkit.broadcastMessage("§2Game Cancelled.§r");
+		Bukkit.getServer().getLogger().info("Countdown id=\"prepare\" cancelled");
 	}
 }

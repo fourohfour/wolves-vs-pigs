@@ -1,6 +1,9 @@
+//Some utility Methods
+
 package io.github.fourohfour.wolvesvspigs;
 
 public class Resources {
+	//One to remove last character from a string
 	public static String RemoveLastChar(String str) {
 
 		  if (str.length() > 0 && str.charAt(str.length()-1)=='x') {
@@ -8,6 +11,8 @@ public class Resources {
 		  }
 		  return str;
 		}
+	
+	//One to turn a string to a boolean
 	public static Boolean StrToBoolean(String str) {
 		if (str.equalsIgnoreCase("True")){
 			Boolean val = true;
@@ -18,8 +23,20 @@ public class Resources {
 		}
 		return null;
 	}
+	
+	//Set the global values to their defaults
 	public static void setGlobalsToDefaults(){
 		Globals.globalvars.put("gamestage", "none");
 		Globals.globalvars.put("cleft", 0);
+		
+		Integer[] prematch = {64, 20};
+    	Globals.cdpresets.put("pregame", prematch);
+    	Integer[] getready = {5, 1200};
+    	Globals.cdpresets.put("prepare", getready);
+    	Integer[] battle  = {5, 1200};
+    	Globals.cdpresets.put("fight", battle);
+    	
+    	Globals.countdowns.clear();
+    	Globals.lobby.clear();
 	}
 }
