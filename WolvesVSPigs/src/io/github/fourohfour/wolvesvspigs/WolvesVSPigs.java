@@ -22,10 +22,12 @@ import io.github.fourohfour.wolvesvspigs.WvpdCommandExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -33,6 +35,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -92,6 +95,9 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 		    		e.setCancelled(true);
 		    	}
 		    }
+		    if (Spectator.hasPlayer((OfflinePlayer) e.getEntity())){
+		    	e.setCancelled(true);
+		    }
 		}
 	}
 	
@@ -106,9 +112,10 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 		else if (Globals.globalvars.get("gamestage").equals("fight")){
 			Team Wolf = Bukkit.getScoreboardManager().getMainScoreboard().getTeam("Wolves");
 			Wolf.addPlayer(event.getPlayer());
+			
 			Kit.Wolf(event.getPlayer());
+			}
 		}
-	}
 	//On Player Death listener
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent event){
@@ -124,6 +131,23 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 		
 		if(Globals.globalvars.get("gamestage") == "fight"){
 			Globals.lobby.add(event.getEntity());
+			
+			Scoreboard main = Bukkit.getScoreboardManager().getMainScoreboard();
+			Team Pig = main.getTeam("Pigs");
+			Team Wolf = main.getTeam("Wolves");
+			if (!(event.getEntity().getKiller() == null)){
+				if (Wolf.hasPlayer(event.getEntity())){
+					scores.put(event.getEntity().getKiller(), scores.get(event.getEntity().getKiller()) + 20);
+					event.getEntity().getKiller().sendMessage("§2" + "You got 20 points for killing a Wolf!" + "§r");
+				}
+				else if (Pig.hasPlayer(event.getEntity())){
+					scores.put(event.getEntity().getKiller(), scores.get(event.getEntity().getKiller()) + 10);
+					event.getEntity().getKiller().sendMessage("§2" + "You got 10 points for killing a Pig. Now enjoy their juicy bacon!" + "§r");
+					ItemStack bacon = new ItemStack(Material.GRILLED_PORK);
+					bacon.getItemMeta().setDisplayName(event.getEntity().getDisplayName());
+					event.getEntity().getKiller().getInventory().addItem();
+			}
+		}
 		}
 		
 		//Stop Sticky items being dropped
@@ -159,6 +183,32 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 		}
 	}
 	
+	@EventHandler
+	public void onInteract(PlayerInteractEvent event){
+		Action a = event.getAction();
+		Scoreboard main = Bukkit.getScoreboardManager().getMainScoreboard();
+		Team w = main.getTeam("Wolves");
+		if(w.hasPlayer(event.getPlayer())){
+			if (a == Action.RIGHT_CLICK_AIR){
+				if (event.getPlayer().getItemInHand().getType() == Material.COMPASS){
+					double closest = Double.MAX_VALUE;
+					Player closestp = null;
+					Team p = main.getTeam("Pigs");
+					for(Player i : Bukkit.getOnlinePlayers()){
+						if(p.hasPlayer(i)){
+							double dist = i.getLocation().distance(event.getPlayer().getLocation());
+							if (closest == Double.MAX_VALUE || dist < closest){
+								closest = dist;
+								closestp = i;
+							}
+						}
+					}
+					event.getPlayer().setCompassTarget(closestp.getLocation());
+					event.getPlayer().sendMessage("§2" + "Set new target to " + closestp.getDisplayName() + "§r");
+				}
+			}
+		}
+	}
 	@EventHandler
 	public void onPlayerDropItem(PlayerDropItemEvent event) {
 		if (event.getItemDrop().getItemStack().getItemMeta().hasLore()){
@@ -232,6 +282,7 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 	}
 	@EventHandler
 	public void onJoinEvent(PlayerJoinEvent join){
+		scores.put(join.getPlayer(), 0);
 		ScoreboardManager m = Bukkit.getScoreboardManager();
 		Scoreboard mainboard = m.getMainScoreboard();
 		Team Spectator = mainboard.getTeam("Spectators");
@@ -329,6 +380,10 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 			cd.run(Globals.cdpresets.get("fight")[0], Globals.cdpresets.get("fight")[1], this);
 			Globals.countdowns.add(cd);
 			}
+		if (state == "none"){
+			//TODO do somthing with scores
+			this.stopcount();
+		}
 	    }
 
 	public Boolean stopcount(){
@@ -360,6 +415,10 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 		inv.setArmorContents(new ItemStack[4]);
 		inv.clear();
 		targ.removePotionEffect(PotionEffectType.SPEED);
+	}
+	
+	public static void getNearestPlayer(Player from){
+		
 	}
 }
 

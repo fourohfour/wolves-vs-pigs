@@ -21,7 +21,7 @@ public class Globals {
 	    	cdpresets.put("pregame", prematch);
 	    	Integer[] getready = {5, 1200};
 	    	cdpresets.put("prepare", getready);
-	    	Integer[] battle  = {5, 1200};
+	    	Integer[] battle  = {10, 1200};
 	    	cdpresets.put("fight", battle);
 	    }
 	    public static List<Countdown> countdowns = new ArrayList<Countdown>();

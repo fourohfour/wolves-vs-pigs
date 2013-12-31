@@ -41,6 +41,9 @@ public class CreateWolves {
 			return false;
 		}
 		int w = (pigs / 4);          //An integer representing a quarter of the pigs (The amount of wolves)
+		if (pigs < 4){
+			w++;
+		}
 		Bukkit.getLogger().info("W amount: " + String.valueOf(w));
 		//Iterate w times
 		for (int i = 0; i < w; i++){

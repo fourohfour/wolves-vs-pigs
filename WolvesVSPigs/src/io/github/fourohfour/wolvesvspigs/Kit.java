@@ -102,7 +102,8 @@ public class Kit {
 		
 		ItemStack pick = createWolfKit("s", Material.WOOD_PICKAXE);
 		
-
+		ItemStack comp = createWolfKit("s", Material.COMPASS);
+		
 		//Give player the equipment
 		EntityEquipment equ = wolfee.getPlayer().getEquipment();
 		equ.setHelmet(head);
@@ -116,6 +117,7 @@ public class Kit {
 		//And add the items
 		targinv.addItem(sword);
 		targinv.addItem(pick);
+		targinv.addItem(comp);
 		
 		//remove speed
 		wolfee.removePotionEffect(PotionEffectType.SPEED);

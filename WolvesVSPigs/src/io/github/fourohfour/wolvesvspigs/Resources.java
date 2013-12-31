@@ -33,7 +33,7 @@ public class Resources {
     	Globals.cdpresets.put("pregame", prematch);
     	Integer[] getready = {5, 1200};
     	Globals.cdpresets.put("prepare", getready);
-    	Integer[] battle  = {5, 1200};
+    	Integer[] battle  = {10, 1200};
     	Globals.cdpresets.put("fight", battle);
     	
     	Globals.countdowns.clear();
