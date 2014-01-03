@@ -35,7 +35,7 @@ public class Fight extends Countdown{
 
 	public void onEnd() {
 		Bukkit.broadcastMessage("§2Game Over!§r");
-		Globals.globalvars.put("gamestage", "none");
+		Globals.globalvars.put("gamestage", "pigwin");
 		GameStateChangeEvent event = new GameStateChangeEvent();
 		Bukkit.getServer().getPluginManager().callEvent(event);
 	}

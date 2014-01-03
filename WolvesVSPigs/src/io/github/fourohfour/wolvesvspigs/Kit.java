@@ -4,8 +4,10 @@ import java.util.ArrayList;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.Inventory;
@@ -21,6 +23,9 @@ public class Kit {
 	
 	//Give player a pig kit
 	public static void Pig(Player pigee){
+		pigee.setGameMode(GameMode.SURVIVAL);
+		pigee.setAllowFlight(false);
+		
 		pigee.getInventory().clear(); //Clear their inventory
 		pigee.getActivePotionEffects().clear(); //And their potion effects
 		//Create a head item stack
@@ -41,12 +46,14 @@ public class Kit {
 
 		ItemStack legs = createPigKit("a", Material.LEATHER_LEGGINGS);
 
-		ItemStack sword = createPigKit("s", Material.STONE_SWORD);
+		ItemStack sword = createPigKit("s", Material.STICK);
 
 		ItemStack pick = createPigKit("s", Material.IRON_PICKAXE);
 
 		ItemStack axe = createPigKit("s", Material.IRON_AXE);
-
+		
+		sword.addUnsafeEnchantment(Enchantment.KNOCKBACK, 1);
+		
 		//Give player the equipment
 		EntityEquipment equ = pigee.getPlayer().getEquipment();
 		equ.setHelmet(head);
@@ -68,12 +75,15 @@ public class Kit {
 	public static void Spectator(Player spectatee){
 		spectatee.getInventory().clear();
 		spectatee.getActivePotionEffects().clear();
+		spectatee.setAllowFlight(true);
 		spectatee.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0));
 		tele(spectatee);
 	}
 	
 	//Give player a wolf kit
 	public static void Wolf(Player wolfee){
+		wolfee.setAllowFlight(false);
+		
 		wolfee.getInventory().clear(); //Clear their inventory
 		wolfee.getActivePotionEffects().clear(); //Potion effects cleared too
 		//Create a head item stack
@@ -92,17 +102,19 @@ public class Kit {
 
 		//Create some more item stacks for the other kit
 		//u is unremovable (for armour), and s is for sticky. Sticky can be moved around in the inventory.
-		ItemStack chest = createWolfKit("a", Material.CHAINMAIL_CHESTPLATE);
+		ItemStack chest = createWolfKit("a", Material.CHAINMAIL_CHESTPLATE, 1);
 		
-		ItemStack legs = createWolfKit("a", Material.CHAINMAIL_LEGGINGS);
+		ItemStack legs = createWolfKit("a", Material.CHAINMAIL_LEGGINGS, 1);
 		
-		ItemStack boots = createWolfKit("a", Material.CHAINMAIL_BOOTS);
+		ItemStack boots = createWolfKit("a", Material.CHAINMAIL_BOOTS, 1);
 		
-		ItemStack sword = createWolfKit("s", Material.IRON_SWORD);
+		ItemStack sword = createWolfKit("s", Material.IRON_SWORD, 1);
 		
-		ItemStack pick = createWolfKit("s", Material.WOOD_PICKAXE);
+		ItemStack pick = createWolfKit("s", Material.WOOD_PICKAXE, 1);
 		
-		ItemStack comp = createWolfKit("s", Material.COMPASS);
+		ItemStack ladders = createWolfKit("s", Material.LADDER, 64);
+		
+		ItemStack comp = createWolfKit("s", Material.COMPASS, 1);
 		
 		//Give player the equipment
 		EntityEquipment equ = wolfee.getPlayer().getEquipment();
@@ -117,10 +129,9 @@ public class Kit {
 		//And add the items
 		targinv.addItem(sword);
 		targinv.addItem(pick);
+		targinv.addItem(ladders);
 		targinv.addItem(comp);
 		
-		//remove speed
-		wolfee.removePotionEffect(PotionEffectType.SPEED);
 		//Give them mining fatigue
 		wolfee.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, Integer.MAX_VALUE, 2));
 	}
@@ -139,8 +150,8 @@ public class Kit {
 		return null;
 	}
 	
-	public static ItemStack createWolfKit(String t, Material m){
-		ItemStack item = new ItemStack(m);
+	public static ItemStack createWolfKit(String t, Material m, int a){
+		ItemStack item = new ItemStack(m, a);
 		if (t == "a"){
 			item = addLore(item, "§a" + "Sticky");
 			return item;

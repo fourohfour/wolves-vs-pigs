@@ -37,7 +37,7 @@ public class CreateWolves {
 		Random rand = new Random();  //Get a random Object
 		int pigs = piglist.size();   //An integer representing the amount of pigs.
 		Bukkit.getLogger().info("Pigs amount: " + String.valueOf(pigs));
-		if (pigs < 1){
+		if (pigs < 2){
 			return false;
 		}
 		int w = (pigs / 4);          //An integer representing a quarter of the pigs (The amount of wolves)
@@ -53,6 +53,7 @@ public class CreateWolves {
 		        if (!(wolves.hasPlayer(piglist.get(r)))){  //Check if that player has already been chosen
 		    		Bukkit.getLogger().info("Inside if!");
 			        wolves.addPlayer(piglist.get(r));      //If not, change them to a wolf
+			        Bukkit.broadcastMessage("§2"+ piglist.get(r).getName() + "is now a pig!" + "§r");
 			        break;                                 //Break the loop so it can choose another player
 		        }
 			}
