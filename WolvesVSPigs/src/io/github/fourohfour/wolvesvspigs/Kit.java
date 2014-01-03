@@ -15,14 +15,18 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
 import org.bukkit.inventory.meta.SkullMeta;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
 //Class that mainly gives players kits
 public class Kit {
-	
+	public JavaPlugin plugin;
+	public Kit(JavaPlugin plugin){
+		this.plugin = plugin;
+	}
 	//Give player a pig kit
-	public static void Pig(Player pigee){
+	public void Pig(final Player pigee){
 		pigee.setGameMode(GameMode.SURVIVAL);
 		pigee.setAllowFlight(false);
 		
@@ -69,19 +73,25 @@ public class Kit {
 		targinv.addItem(axe);
 		
 		//Give them speed indefinatly
-		pigee.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 0));
+		Bukkit.getScheduler().runTask(plugin, new Runnable() {
+
+			@Override
+			public void run() {
+				pigee.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 0));
+			}
+		});
 	}
 	
-	public static void Spectator(Player spectatee){
+	public void Spectator(Player spectatee){
 		spectatee.getInventory().clear();
 		spectatee.getActivePotionEffects().clear();
 		spectatee.setAllowFlight(true);
 		spectatee.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0));
-		tele(spectatee);
+		this.tele(spectatee);
 	}
 	
 	//Give player a wolf kit
-	public static void Wolf(Player wolfee){
+	public void Wolf(final Player wolfee){
 		wolfee.setAllowFlight(false);
 		
 		wolfee.getInventory().clear(); //Clear their inventory
@@ -133,11 +143,17 @@ public class Kit {
 		targinv.addItem(comp);
 		
 		//Give them mining fatigue
-		wolfee.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, Integer.MAX_VALUE, 2));
+		Bukkit.getScheduler().runTask(plugin, new Runnable() {
+
+			@Override
+			public void run() {
+				wolfee.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, Integer.MAX_VALUE, 2));
+			}
+		});
 	}
 	
 	//Creates Kit for pigs
-	public static ItemStack createPigKit(String t, Material m){
+	public ItemStack createPigKit(String t, Material m){
 		if (t == "a"){
 			ItemStack item = colorLeatherArmor(m,  Color.fromRGB(255, 92, 205));
 			item = addLore(item, "§a" + "Sticky");
@@ -150,7 +166,7 @@ public class Kit {
 		return null;
 	}
 	
-	public static ItemStack createWolfKit(String t, Material m, int a){
+	public ItemStack createWolfKit(String t, Material m, int a){
 		ItemStack item = new ItemStack(m, a);
 		if (t == "a"){
 			item = addLore(item, "§a" + "Sticky");
@@ -184,7 +200,7 @@ public class Kit {
     }
     
     //Teleports a player to the centre and gives the resistance so they don't die from the drop
-    public static void tele(Player p) {
+    public void tele(Player p) {
         Location centre = new Location(p.getWorld(), 0, 70, 0);
         p.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100, 5));
         p.teleport(centre);

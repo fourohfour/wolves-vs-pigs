@@ -14,7 +14,7 @@ import org.bukkit.scoreboard.ScoreboardManager;
 import org.bukkit.scoreboard.Team;
 
 public class CreateWolves {
-	public static boolean createWolves(){
+	public static boolean createWolves(Kit k){
 		
 		//Get the Scoreboard Objects
 		ScoreboardManager smanager = Bukkit.getServer().getScoreboardManager();
@@ -53,7 +53,7 @@ public class CreateWolves {
 		        if (!(wolves.hasPlayer(piglist.get(r)))){  //Check if that player has already been chosen
 		    		Bukkit.getLogger().info("Inside if!");
 			        wolves.addPlayer(piglist.get(r));      //If not, change them to a wolf
-			        Bukkit.broadcastMessage("§2"+ piglist.get(r).getName() + "is now a pig!" + "§r");
+			        Bukkit.broadcastMessage("§2"+ piglist.get(r).getName() + " is now a wolf!" + "§r");
 			        break;                                 //Break the loop so it can choose another player
 		        }
 			}
@@ -67,8 +67,8 @@ public class CreateWolves {
 		
 		//Iterate through it and give wolves the kit and then teleport them.
 		for(int i = 0; i < wolves.getSize(); i++){
-			Kit.Wolf((Player) wolflist.get(i));
-			Kit.tele((Player) wolflist.get(i));
+		    k.Wolf((Player) wolflist.get(i));
+			k.tele((Player) wolflist.get(i));
 		}
 		return true;
 		

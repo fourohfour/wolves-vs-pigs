@@ -37,6 +37,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.FoodLevelChangeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
@@ -63,6 +64,7 @@ import org.bukkit.scoreboard.Team;
 public final class WolvesVSPigs extends JavaPlugin implements Listener{
 	public Map<Player, Integer> scores = new HashMap<Player, Integer>();
 	public Set<OfflinePlayer> betas = new HashSet<OfflinePlayer>();
+	public Kit kit = new Kit(this);
 	
 	//On Enable class
 	@Override
@@ -72,6 +74,7 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 		Resources.setGlobalsToDefaults();
 
 		//Set Command Executors
+		
 		getCommand("wvpa").setExecutor(new WvpaCommandExecutor(this));
 		getCommand("wvp").setExecutor(new WvpCommandExecutor(this));
 		getCommand("wvpd").setExecutor(new WvpdCommandExecutor(this));
@@ -127,20 +130,20 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 				if (Spectator.hasPlayer(p) || Spectator.hasPlayer(d)){
 					e.setCancelled(true);
 				}
+				}
 			}
 		}
-	}
 
 	@EventHandler
 	public void onPlayerRespawn(final PlayerRespawnEvent event){
 		if (Globals.globalvars.get("gamestage").equals("pregame") ||Globals.globalvars.get("gamestage").equals("prepare")){
 			if(Globals.lobby.contains(event.getPlayer())){
-				Kit.Pig(event.getPlayer());
+				kit.Pig(event.getPlayer());
 				Bukkit.getScheduler().runTask(this, new Runnable(){
 
 					@Override
 					public void run() {
-						Kit.tele(event.getPlayer());
+						kit.tele(event.getPlayer());
 
 					}
 
@@ -152,12 +155,12 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 			Team Wolf = Bukkit.getScoreboardManager().getMainScoreboard().getTeam("Wolves");
 			Wolf.addPlayer(event.getPlayer());
 
-			Kit.Wolf(event.getPlayer());
+			kit.Wolf(event.getPlayer());
 			Bukkit.getScheduler().runTask(this, new Runnable(){
 
 				@Override
 				public void run() {
-					Kit.tele(event.getPlayer());
+					kit.tele(event.getPlayer());
 
 				}
 
@@ -168,6 +171,7 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 	//On Player Death listener
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent event){
+		if (!(Bukkit.getScoreboardManager().getMainScoreboard().getObjective("left") == null)){
 		Score p = Bukkit.getScoreboardManager().getMainScoreboard().getObjective("left").getScore(Bukkit.getOfflinePlayer("§D" + "Pigs:" + "§r"));
 		Score w = Bukkit.getScoreboardManager().getMainScoreboard().getObjective("left").getScore(Bukkit.getOfflinePlayer("§7" + "Wolves:" + "§r"));
 
@@ -203,7 +207,7 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 
 						Wolf.addPlayer(event.getEntity());
 
-						Kit.Wolf(event.getEntity());
+						kit.Wolf(event.getEntity());
 
 						w.setScore(w.getScore() + 1);
 
@@ -238,6 +242,7 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 
 		//Will keep going round removing null values until there are no more null values
 		while(event.getDrops().remove(null)){
+		}
 		}
 	}
 
@@ -341,14 +346,8 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 		if (blockt == Material.GLASS && (breakb.getPlayer().getMetadata("CanBreakGlass").get(0).asBoolean() == false)){
 			Block ob = breakb.getBlock();
 			final Location bloc = new Location(breakb.getPlayer().getWorld(), ob.getX(), ob.getY(), ob.getZ());
-			Bukkit.getScheduler().runTask(this, new Runnable() {
-				@Override
-				public void run(){
-					Player pl = breakb.getPlayer();
-					pl.getWorld().getBlockAt(bloc).setType(Material.GLASS);
-					pl.sendMessage("§2" + "You may not escape. Turn and Fight." + "§r");
-				}
-			});
+			breakb.setCancelled(true);
+			breakb.getPlayer().sendMessage("§2" + "You may not escape. Turn and Fight." + "§r");
 		}
 		Team Spectator = Bukkit.getScoreboardManager().getMainScoreboard().getTeam("Spectators");
 		if(!(Spectator == null)){
@@ -365,7 +364,7 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 		Team Spectator = mainboard.getTeam("Spectators");
 		if (!(Spectator == null)){
 			Spectator.addPlayer(join.getPlayer());
-			Kit.Spectator(join.getPlayer());
+			kit.Spectator(join.getPlayer());
 		}
 
 		Player joined = join.getPlayer();
@@ -388,9 +387,12 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 				Score p = o.getScore(Bukkit.getOfflinePlayer("§D" + "Pigs:" + "§r"));
 				Score w = o.getScore(Bukkit.getOfflinePlayer("§7" + "Wolves:" + "§r"));
 
-				switch (i.getName()){
-				case ("Pigs"): p.setScore(p.getScore() - 1);
-				case ("Wolves"): w.setScore(p.getScore() - 1);
+				
+				if (i.getName() == ("Pigs")){
+					p.setScore(p.getScore() - 1);
+				}
+				else if (i.getName() == ("Wolves")){
+					w.setScore(w.getScore() - 1);
 				};
 			}
 
@@ -437,20 +439,26 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 			pigs.setSuffix("§r");
 			for(int index=0; index < np; index++){
 				pigs.addPlayer(onp[index]);
-				Kit.Pig(onp[index]);
+				kit.Pig(onp[index]);
 				p.setScore(p.getScore() + 1);
 				if (onp[index].getMetadata("IngameTP").get(0).asBoolean() == true){
-					Kit.tele(onp[index]);
+					kit.tele(onp[index]);
 				}
 			}
 
 			PreGame cd = new PreGame();
 			cd.run(Globals.cdpresets.get("pregame")[0], Globals.cdpresets.get("pregame")[1], this);
 			Globals.countdowns.add(cd);
+			
+			for (Player i : Bukkit.getOnlinePlayers()){
+				if (!(scores.containsKey(i))){
+					scores.put(i, 0);
+				}
+			}
 		}
 		if (state == "prepare"){
 			for(int i = 0; i < Globals.lobby.size(); i++){
-				Kit.Pig(Globals.lobby.get(i));
+				kit.Pig(Globals.lobby.get(i));
 			}
 			Globals.lobby.clear();
 
@@ -463,11 +471,11 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 			Scoreboard mainboard = mainmanager.getMainScoreboard();
 			Team pigs = mainboard.getTeam("Pigs");
 			for(int i = 0; i < Globals.lobby.size(); i++){
-				Kit.Pig(Globals.lobby.get(i));
+				kit.Pig(Globals.lobby.get(i));
 				pigs.addPlayer(Globals.lobby.get(i));
 			}
 			Globals.lobby.clear();
-			if (!CreateWolves.createWolves()){
+			if (!CreateWolves.createWolves(kit)){
 				Bukkit.broadcastMessage("§2" + "Not enough Pigs!" + "§r");
 				this.stopcount();
 			}
@@ -555,6 +563,12 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 		inv.clear();
 		targ.removePotionEffect(PotionEffectType.SPEED);
 	}
+	
+	@EventHandler
+	public void onLooseHunger(FoodLevelChangeEvent e){
+		e.setFoodLevel(20);
+		
+	}
 
 	@EventHandler
 	public void chatFormat(AsyncPlayerChatEvent e){
@@ -570,7 +584,10 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 				e.setFormat(prefix + "§D" + e.getPlayer().getName() + ": " + "§r" + e.getMessage());
 			}
 			else if (t == "Wolves"){
-				e.setFormat(prefix + "§7" + e.getPlayer().getName() + "§r" + e.getMessage());
+				e.setFormat(prefix + "§7" + e.getPlayer().getName() +  ": " + "§r" + e.getMessage());
+			}
+			else if (t == "Spectators"){
+				e.setFormat(prefix + "§1" + e.getPlayer().getName() +  ": " + "§r" + e.getMessage());
 			}
 		}
 	}
