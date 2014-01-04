@@ -549,7 +549,7 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 		}
 		for (int indexp = 0; indexp < Bukkit.getOnlinePlayers().length; indexp ++){
 			clearinv(Bukkit.getOnlinePlayers()[indexp]);
-
+			(Bukkit.getOnlinePlayers()[indexp]).getActivePotionEffects().clear();
 		}
 		scores.clear();
 		Objective o = mainboard.getObjective("left");
