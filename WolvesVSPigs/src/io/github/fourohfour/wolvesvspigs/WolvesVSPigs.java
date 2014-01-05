@@ -7,7 +7,6 @@ package io.github.fourohfour.wolvesvspigs;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,7 +25,6 @@ import io.github.fourohfour.wolvesvspigs.WvpaCommandExecutor;
 import io.github.fourohfour.wolvesvspigs.WvpdCommandExecutor;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
@@ -65,7 +63,7 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 	public Map<Player, Integer> scores = new HashMap<Player, Integer>();
 	public Set<OfflinePlayer> betas = new HashSet<OfflinePlayer>();
 	public Kit kit = new Kit(this);
-	
+
 	//On Enable class
 	@Override
 	public void onEnable(){
@@ -74,7 +72,7 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 		Resources.setGlobalsToDefaults();
 
 		//Set Command Executors
-		
+
 		getCommand("wvpa").setExecutor(new WvpaCommandExecutor(this));
 		getCommand("wvp").setExecutor(new WvpCommandExecutor(this));
 		getCommand("wvpd").setExecutor(new WvpdCommandExecutor(this));
@@ -93,7 +91,7 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 
 			scores.put(target, 0);
 		}
-		
+
 		File beta = new File("./WVP/beta.txt");
 		if (!beta.exists()){
 			Bukkit.getLogger().info("Beta File not found... creating now.");
@@ -101,7 +99,7 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 		}
 		Scanner s = null;
 		try {
-            s = new Scanner(beta);
+			s = new Scanner(beta);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -130,25 +128,30 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 				if (Spectator.hasPlayer(p) || Spectator.hasPlayer(d)){
 					e.setCancelled(true);
 				}
-				}
 			}
 		}
+	}
 
 	@EventHandler
 	public void onPlayerRespawn(final PlayerRespawnEvent event){
 		if (Globals.globalvars.get("gamestage").equals("pregame") ||Globals.globalvars.get("gamestage").equals("prepare")){
 			if(Globals.lobby.contains(event.getPlayer())){
-				kit.Pig(event.getPlayer());
-				Bukkit.getScheduler().runTask(this, new Runnable(){
+				if(!(Bukkit.getScoreboardManager().getMainScoreboard().getTeam("Spectators").hasPlayer(event.getPlayer()))){
+					kit.Pig(event.getPlayer());
+					Bukkit.getScheduler().runTask(this, new Runnable(){
 
-					@Override
-					public void run() {
-						kit.tele(event.getPlayer());
+						@Override
+						public void run() {
+							kit.tele(event.getPlayer());
 
-					}
+						}
 
-				});
-				Globals.lobby.remove(event.getPlayer());
+					});
+					Globals.lobby.remove(event.getPlayer());
+				}
+				else{
+					kit.Spectator(event.getPlayer());
+				}
 			}
 		}
 		else if (Globals.globalvars.get("gamestage").equals("fight")){
@@ -172,80 +175,83 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent event){
 		if (!(Bukkit.getScoreboardManager().getMainScoreboard().getObjective("left") == null)){
-		Score p = Bukkit.getScoreboardManager().getMainScoreboard().getObjective("left").getScore(Bukkit.getOfflinePlayer("§D" + "Pigs:" + "§r"));
-		Score w = Bukkit.getScoreboardManager().getMainScoreboard().getObjective("left").getScore(Bukkit.getOfflinePlayer("§7" + "Wolves:" + "§r"));
+			Score p = Bukkit.getScoreboardManager().getMainScoreboard().getObjective("left").getScore(Bukkit.getOfflinePlayer("§D" + "Pigs:" + "§r"));
+			Score w = Bukkit.getScoreboardManager().getMainScoreboard().getObjective("left").getScore(Bukkit.getOfflinePlayer("§7" + "Wolves:" + "§r"));
 
-		//What to do if the gamestage is pregame
-		if(Globals.globalvars.get("gamestage") == "pregame"){
-			Globals.lobby.add(event.getEntity());
-		}
+			//What to do if the gamestage is pregame
+			if(Globals.globalvars.get("gamestage") == "pregame"){
+				Globals.lobby.add(event.getEntity());
+			}
 
-		if(Globals.globalvars.get("gamestage") == "prepare"){
-			Globals.lobby.add(event.getEntity());
-		}
+			if(Globals.globalvars.get("gamestage") == "prepare"){
+				Globals.lobby.add(event.getEntity());
+			}
 
-		if(Globals.globalvars.get("gamestage") == "fight"){
-			if (!(event.getEntity().getKiller() == null)){
+			if(Globals.globalvars.get("gamestage") == "fight"){
 				Scoreboard main = Bukkit.getScoreboardManager().getMainScoreboard();
 				Team Pig = main.getTeam("Pigs");
 				Team Wolf = main.getTeam("Wolves");
-				if (!(Pig == null) && !(Wolf == null)){
-					if (Wolf.hasPlayer(event.getEntity())){
-						scores.put(event.getEntity().getKiller(), scores.get(event.getEntity().getKiller()) + 20);
-						event.getEntity().getKiller().sendMessage("§2" + "You got 20 points for killing a Wolf!" + "§r");
-					}
-					else if (Pig.hasPlayer(event.getEntity())){
-						p.setScore(p.getScore() - 1);
+				if (!(event.getEntity().getKiller() == null)){
+					if (!(Pig == null) && !(Wolf == null)){
+						if (Wolf.hasPlayer(event.getEntity())){
+							scores.put(event.getEntity().getKiller(), scores.get(event.getEntity().getKiller()) + 20);
+							event.getEntity().getKiller().sendMessage("§2" + "You got 20 points for killing a Wolf!" + "§r");
+						}
+						else if (Pig.hasPlayer(event.getEntity())){
 
-						scores.put(event.getEntity().getKiller(), scores.get(event.getEntity().getKiller()) + 15);
-						event.getEntity().getKiller().sendMessage("§2" + "You got 10 points for killing a Pig. Now enjoy their juicy bacon!" + "§r");
-						ItemStack bacon = new ItemStack(Material.GRILLED_PORK);
-						ItemMeta meta = bacon.getItemMeta();
-						meta.setDisplayName(event.getEntity().getName());
-						bacon.setItemMeta(meta);
-						event.getEntity().getKiller().getInventory().addItem(bacon);
+							scores.put(event.getEntity().getKiller(), scores.get(event.getEntity().getKiller()) + 15);
+							event.getEntity().getKiller().sendMessage("§2" + "You got 10 points for killing a Pig. Now enjoy their juicy bacon!" + "§r");
+							ItemStack bacon = new ItemStack(Material.GRILLED_PORK);
+							ItemMeta meta = bacon.getItemMeta();
+							meta.setDisplayName(event.getEntity().getName());
+							bacon.setItemMeta(meta);
+							event.getEntity().getKiller().getInventory().addItem(bacon);
 
-						Wolf.addPlayer(event.getEntity());
-
-						kit.Wolf(event.getEntity());
-
-						w.setScore(w.getScore() + 1);
-
-						for (OfflinePlayer player : Pig.getPlayers()){
-							((Player) player).sendMessage("§2" + "Another pig has fallen! But you get 5 points for surviving longer!" + "§r");
-							scores.put((Player) player, scores.get(player) + 10);
 						}
 					}
-					if(Pig.getSize() == 0){
-						Globals.globalvars.put("gamestage", "wolfwin");
-						GameStateChangeEvent e = new GameStateChangeEvent();
-						Bukkit.getServer().getPluginManager().callEvent(e);
+				}
+				if (Pig.hasPlayer(event.getEntity())){
+					Wolf.addPlayer(event.getEntity());
+
+					kit.Wolf(event.getEntity());
+
+					w.setScore(w.getScore() + 1);
+					p.setScore(p.getScore() - 1);
+					
+					for (OfflinePlayer player : Pig.getPlayers()){
+						((Player) player).sendMessage("§2" + "Another pig has fallen! But you get 5 points for surviving longer!" + "§r");
+						scores.put((Player) player, scores.get(player) + 10);
+
 					}
 				}
-			}
-		}
+				if(Pig.getSize() == 0){
+					Globals.globalvars.put("gamestage", "wolfwin");
+					GameStateChangeEvent e = new GameStateChangeEvent();
+					Bukkit.getServer().getPluginManager().callEvent(e);
+				}
 
-		//Stop Sticky items being dropped
+				//Stop Sticky items being dropped
 
-		int droplen = event.getDrops().size();
-		//Iterate through items to be dropped
-		for (int dropi = 0; dropi < droplen; dropi++){
-			//Check if the item has lore
-			if(event.getDrops().get(dropi).getItemMeta().hasLore()){
-				//If it does and the lore is sticky (with a lime green format code) then...
-				if(event.getDrops().get(dropi).getItemMeta().getLore().get(0).equals("§a" + "Sticky")){
-					//Set that value to null
-					event.getDrops().set(dropi, null);
+				int droplen = event.getDrops().size();
+				//Iterate through items to be dropped
+				for (int dropi = 0; dropi < droplen; dropi++){
+					//Check if the item has lore
+					if(event.getDrops().get(dropi).getItemMeta().hasLore()){
+						//If it does and the lore is sticky (with a lime green format code) then...
+						if(event.getDrops().get(dropi).getItemMeta().getLore().get(0).equals("§a" + "Sticky")){
+							//Set that value to null
+							event.getDrops().set(dropi, null);
+						}
+					}
+				}
+
+				//Will keep going round removing null values until there are no more null values
+				while(event.getDrops().remove(null)){
 				}
 			}
 		}
 
-		//Will keep going round removing null values until there are no more null values
-		while(event.getDrops().remove(null)){
-		}
-		}
 	}
-
 	@EventHandler
 	public void onPlayerPickupItemEvent(PlayerPickupItemEvent event){
 		ScoreboardManager m = Bukkit.getScoreboardManager();
@@ -344,8 +350,6 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 		}
 		Material blockt = breakb.getBlock().getType();
 		if (blockt == Material.GLASS && (breakb.getPlayer().getMetadata("CanBreakGlass").get(0).asBoolean() == false)){
-			Block ob = breakb.getBlock();
-			final Location bloc = new Location(breakb.getPlayer().getWorld(), ob.getX(), ob.getY(), ob.getZ());
 			breakb.setCancelled(true);
 			breakb.getPlayer().sendMessage("§2" + "You may not escape. Turn and Fight." + "§r");
 		}
@@ -387,7 +391,7 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 				Score p = o.getScore(Bukkit.getOfflinePlayer("§D" + "Pigs:" + "§r"));
 				Score w = o.getScore(Bukkit.getOfflinePlayer("§7" + "Wolves:" + "§r"));
 
-				
+
 				if (i.getName() == ("Pigs")){
 					p.setScore(p.getScore() - 1);
 				}
@@ -427,8 +431,10 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 			o.setDisplaySlot(DisplaySlot.SIDEBAR);
 			Score p = o.getScore(Bukkit.getOfflinePlayer("§D" + "Pigs:" + "§r"));
 			Score w = o.getScore(Bukkit.getOfflinePlayer("§7" + "Wolves:" + "§r"));
+			Score t = o.getScore(Bukkit.getOfflinePlayer("Time Left:"));
 			p.setScore(0);
 			w.setScore(0);
+			t.setScore(0);
 
 			Team pigs = players.registerNewTeam("Pigs");
 			Team spectators = players.registerNewTeam("Spectators");
@@ -449,7 +455,7 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 			PreGame cd = new PreGame();
 			cd.run(Globals.cdpresets.get("pregame")[0], Globals.cdpresets.get("pregame")[1], this);
 			Globals.countdowns.add(cd);
-			
+
 			for (Player i : Bukkit.getOnlinePlayers()){
 				if (!(scores.containsKey(i))){
 					scores.put(i, 0);
@@ -525,8 +531,8 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 					i.sendMessage("§2" + "You get a bonus of " + String.valueOf(bonus) + "§r");
 					i.sendMessage("§2" + "You get a final score of " + scores.get(i) + "§r");
 				}
-				this.stopcount();
 			}
+			this.stopcount();
 		}
 		if (state == "none"){
 			this.stopcount();
@@ -563,11 +569,11 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 		inv.clear();
 		targ.removePotionEffect(PotionEffectType.SPEED);
 	}
-	
+
 	@EventHandler
 	public void onLooseHunger(FoodLevelChangeEvent e){
 		e.setFoodLevel(20);
-		
+
 	}
 
 	@EventHandler
@@ -579,7 +585,7 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 		Team team = Bukkit.getScoreboardManager().getMainScoreboard().getPlayerTeam(e.getPlayer());
 		if (!(team == null)){
 			String t = team.getName();
-			
+
 			if (t == "Pigs"){
 				e.setFormat(prefix + "§D" + e.getPlayer().getName() + ": " + "§r" + e.getMessage());
 			}
@@ -590,6 +596,17 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 				e.setFormat(prefix + "§1" + e.getPlayer().getName() +  ": " + "§r" + e.getMessage());
 			}
 		}
+	}
+
+	public static boolean setTimeLeft(int i){
+		Scoreboard main = Bukkit.getScoreboardManager().getMainScoreboard();
+		if (!(main.getObjective("left") == null)){
+			Objective o = main.getObjective("left");
+			Score t = o.getScore(Bukkit.getOfflinePlayer("Time Left:"));
+			t.setScore(i);
+			return true;
+		}
+		return false;
 	}
 
 }

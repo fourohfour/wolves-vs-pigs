@@ -1,3 +1,8 @@
+//Command Executor for WVPA commands
+//Initialised by main class in on enable
+//By FourOhFour
+//http://fourohfour.github.io
+
 package io.github.fourohfour.wolvesvspigs;
 
 import io.github.fourohfour.wolvesvspigs.WolvesVSPigs;

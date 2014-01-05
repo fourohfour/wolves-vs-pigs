@@ -1,4 +1,7 @@
-//Contains the WVP Preference "API"
+//PreferenceManager class
+//Controls WVP Preferences - Options that are stored in player metadata.
+//By FourOhFour
+//http://fourohfour.github.io
 
 package io.github.fourohfour.wolvesvspigs;
 

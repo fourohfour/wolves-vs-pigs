@@ -1,4 +1,7 @@
-//Some utility Methods
+//Resources
+//Has some utility classes.
+//By FourOhFour
+//http://fourohfour.github.io
 
 package io.github.fourohfour.wolvesvspigs;
 

@@ -1,3 +1,9 @@
+//GameStateChangeEvent class
+//A custom listener designed to be activated when a player changes the gamestage
+//Incorrectly named, should actually be GameStageChangeEvent. But ah well.
+//By FourOhFour
+//http://fourohfour.github.io
+
 package io.github.fourohfour.wolvesvspigs;
 
 import org.bukkit.event.Cancellable;

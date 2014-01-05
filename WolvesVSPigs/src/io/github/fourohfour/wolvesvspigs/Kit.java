@@ -1,3 +1,8 @@
+//Kit class
+//Has classes to give Pig, Wolf and Spectator kits to players
+//By FourOhFour
+//http://fourohfour.github.io
+
 package io.github.fourohfour.wolvesvspigs;
 
 import java.util.ArrayList;
@@ -30,8 +35,8 @@ public class Kit {
 		pigee.setGameMode(GameMode.SURVIVAL);
 		pigee.setAllowFlight(false);
 		
-		pigee.getInventory().clear(); //Clear their inventory
-		pigee.getActivePotionEffects().clear(); //And their potion effects
+		clearInventory(pigee);
+
 		//Create a head item stack
 		ItemStack head = new ItemStack(397, 1, (short) 3);
 		//Get it's meta
@@ -77,14 +82,15 @@ public class Kit {
 
 			@Override
 			public void run() {
+				clearPotionEffects(pigee);
 				pigee.addPotionEffect(new PotionEffect(PotionEffectType.SPEED, Integer.MAX_VALUE, 0));
 			}
 		});
 	}
 	
 	public void Spectator(Player spectatee){
-		spectatee.getInventory().clear();
-		spectatee.getActivePotionEffects().clear();
+		clearInventory(spectatee);
+		clearPotionEffects(spectatee);
 		spectatee.setAllowFlight(true);
 		spectatee.addPotionEffect(new PotionEffect(PotionEffectType.INVISIBILITY, Integer.MAX_VALUE, 0));
 		this.tele(spectatee);
@@ -94,8 +100,8 @@ public class Kit {
 	public void Wolf(final Player wolfee){
 		wolfee.setAllowFlight(false);
 		
-		wolfee.getInventory().clear(); //Clear their inventory
-		wolfee.getActivePotionEffects().clear(); //Potion effects cleared too
+		clearInventory(wolfee);
+		
 		//Create a head item stack
 		ItemStack head = new ItemStack(397, 1, (short) 3);
 		//Get it's meta
@@ -147,6 +153,7 @@ public class Kit {
 
 			@Override
 			public void run() {
+				clearPotionEffects(wolfee);
 				wolfee.addPotionEffect(new PotionEffect(PotionEffectType.SLOW_DIGGING, Integer.MAX_VALUE, 2));
 			}
 		});
@@ -204,5 +211,19 @@ public class Kit {
         Location centre = new Location(p.getWorld(), 0, 70, 0);
         p.addPotionEffect(new PotionEffect(PotionEffectType.DAMAGE_RESISTANCE, 100, 5));
         p.teleport(centre);
+    }
+    
+    public static Player clearPotionEffects(Player p){
+    	for(PotionEffect effect : p.getActivePotionEffects())
+    	{
+    	    p.removePotionEffect(effect.getType());
+    	}
+    	return p;
+    }
+    
+    public static Player clearInventory(Player p){
+    	p.getInventory().clear();
+    	p.getInventory().setArmorContents(new ItemStack[4]);
+    	return p;
     }
 }

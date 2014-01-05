@@ -1,3 +1,8 @@
+//Fight Countdown class
+//Countdown for the fight period.
+//By FourOhFour
+//http://fourohfour.github.io
+
 package io.github.fourohfour.countdown;
 
 import org.bukkit.Bukkit;
@@ -8,6 +13,7 @@ import io.github.fourohfour.devcountdown.Countdown;
 import io.github.fourohfour.devcountdown.Tick;
 import io.github.fourohfour.wolvesvspigs.GameStateChangeEvent;
 import io.github.fourohfour.wolvesvspigs.Globals;
+import io.github.fourohfour.wolvesvspigs.WolvesVSPigs;
 
 public class Fight extends Countdown{
 	public static int Count;
@@ -31,6 +37,8 @@ public class Fight extends Countdown{
 					onp[index].sendMessage("§2" + String.valueOf(t.getTickID()) + " minutes left of the match!§r");
 				}
 			}
+			Globals.globalvars.put("cleft", t.getTickID());
+			WolvesVSPigs.setTimeLeft(t.getTickID());
 		}
 
 	public void onEnd() {

@@ -1,3 +1,8 @@
+//Globals class
+//Stores the global variables such as gamestage.
+//By FourOhFour
+//http://fourohfour.github.io
+
 package io.github.fourohfour.wolvesvspigs;
 
 import io.github.fourohfour.devcountdown.Countdown;

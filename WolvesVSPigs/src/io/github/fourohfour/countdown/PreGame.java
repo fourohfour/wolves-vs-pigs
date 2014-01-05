@@ -1,9 +1,16 @@
+//PreGame Countdown class
+//Countdown for the pregame period.
+//By FourOhFour
+//http://fourohfour.github.io
+
+
 package io.github.fourohfour.countdown;
 
 import io.github.fourohfour.devcountdown.Countdown;
 import io.github.fourohfour.devcountdown.Tick;
 import io.github.fourohfour.wolvesvspigs.GameStateChangeEvent;
 import io.github.fourohfour.wolvesvspigs.Globals;
+import io.github.fourohfour.wolvesvspigs.WolvesVSPigs;
 
 import org.bukkit.Bukkit;
 
@@ -20,6 +27,8 @@ public class PreGame extends Countdown {
 		if (t.isMilestone(new int[] {5, Count})){
 			Bukkit.broadcastMessage("§2Only " + String.valueOf(t.getTickID()) + " seconds left until the game starts!§r");
 		}
+		Globals.globalvars.put("cleft", t.getTickID());
+		WolvesVSPigs.setTimeLeft(t.getTickID());
 	}
 
 	public void onEnd() {

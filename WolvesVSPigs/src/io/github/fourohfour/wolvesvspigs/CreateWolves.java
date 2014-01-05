@@ -1,4 +1,9 @@
-//Automatically creates wolves.
+//CreateWolves class
+//Automatically creates wolves
+//By FourOhFour
+//http://fourohfour.github.io
+
+
 package io.github.fourohfour.wolvesvspigs;
 
 import java.util.ArrayList;
