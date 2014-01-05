@@ -175,8 +175,6 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 	@EventHandler
 	public void onPlayerDeath(PlayerDeathEvent event){
 		if (!(Bukkit.getScoreboardManager().getMainScoreboard().getObjective("left") == null)){
-			Score p = Bukkit.getScoreboardManager().getMainScoreboard().getObjective("left").getScore(Bukkit.getOfflinePlayer("§D" + "Pigs:" + "§r"));
-			Score w = Bukkit.getScoreboardManager().getMainScoreboard().getObjective("left").getScore(Bukkit.getOfflinePlayer("§7" + "Wolves:" + "§r"));
 
 			//What to do if the gamestage is pregame
 			if(Globals.globalvars.get("gamestage") == "pregame"){
@@ -211,12 +209,10 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 					}
 				}
 				if (Pig.hasPlayer(event.getEntity())){
+					Pig.removePlayer(event.getEntity());
 					Wolf.addPlayer(event.getEntity());
 
 					kit.Wolf(event.getEntity());
-
-					w.setScore(w.getScore() + 1);
-					p.setScore(p.getScore() - 1);
 					
 					for (OfflinePlayer player : Pig.getPlayers()){
 						((Player) player).sendMessage("§2" + "Another pig has fallen! But you get 5 points for surviving longer!" + "§r");
@@ -229,6 +225,8 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 					GameStateChangeEvent e = new GameStateChangeEvent();
 					Bukkit.getServer().getPluginManager().callEvent(e);
 				}
+				
+				updateScores();
 
 				//Stop Sticky items being dropped
 
@@ -387,16 +385,14 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 		tlist.addAll(tset);
 		for (Team i : tset){
 			if (i.removePlayer(leave.getPlayer())){
-				Objective o = main.getObjective("left");
-				Score p = o.getScore(Bukkit.getOfflinePlayer("§D" + "Pigs:" + "§r"));
-				Score w = o.getScore(Bukkit.getOfflinePlayer("§7" + "Wolves:" + "§r"));
+				updateScores();
 
 
 				if (i.getName() == ("Pigs")){
-					p.setScore(p.getScore() - 1);
+					updateScores();
 				}
 				else if (i.getName() == ("Wolves")){
-					w.setScore(w.getScore() - 1);
+					updateScores();
 				};
 			}
 
@@ -429,11 +425,8 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 			Objective o = players.registerNewObjective("left", "dummy");
 			o.setDisplayName("Players left");
 			o.setDisplaySlot(DisplaySlot.SIDEBAR);
-			Score p = o.getScore(Bukkit.getOfflinePlayer("§D" + "Pigs:" + "§r"));
-			Score w = o.getScore(Bukkit.getOfflinePlayer("§7" + "Wolves:" + "§r"));
 			Score t = o.getScore(Bukkit.getOfflinePlayer("Time Left:"));
-			p.setScore(0);
-			w.setScore(0);
+			updateScores();
 			t.setScore(0);
 
 			Team pigs = players.registerNewTeam("Pigs");
@@ -446,7 +439,7 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 			for(int index=0; index < np; index++){
 				pigs.addPlayer(onp[index]);
 				kit.Pig(onp[index]);
-				p.setScore(p.getScore() + 1);
+				updateScores();
 				if (onp[index].getMetadata("IngameTP").get(0).asBoolean() == true){
 					kit.tele(onp[index]);
 				}
@@ -487,10 +480,7 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 			}
 			Team wolves = mainboard.getTeam("Wolves");
 
-			Score w = mainboard.getObjective("left").getScore(Bukkit.getOfflinePlayer("§7" + "Wolves:" + "§r"));
-			Score p = mainboard.getObjective("left").getScore(Bukkit.getOfflinePlayer("§D" + "Pigs:" + "§r"));
-			w.setScore(wolves.getSize());
-			p.setScore(p.getScore() - wolves.getSize());
+			updateScores();
 			Fight cd = new Fight();
 			cd.run(Globals.cdpresets.get("fight")[0], Globals.cdpresets.get("fight")[1], this);
 			Globals.countdowns.add(cd);
@@ -607,6 +597,23 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 			return true;
 		}
 		return false;
+	}
+	
+	public static void updateScores(){
+		Scoreboard main = Bukkit.getScoreboardManager().getMainScoreboard();
+		Score w = main.getObjective("left").getScore(Bukkit.getOfflinePlayer("§7" + "Wolves:" + "§r"));
+		Score p = main.getObjective("left").getScore(Bukkit.getOfflinePlayer("§D" + "Pigs:" + "§r"));
+		
+		Team wolves = main.getTeam("Wolves");
+		Team pigs = main.getTeam("Pigs");
+		
+		if (!(wolves == null)){
+		w.setScore(wolves.getSize());
+		}
+		else if (!(pigs == null)){
+		p.setScore(pigs.getSize());
+		}
+		
 	}
 
 }
