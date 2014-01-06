@@ -225,6 +225,7 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 					GameStateChangeEvent e = new GameStateChangeEvent();
 					Bukkit.getServer().getPluginManager().callEvent(e);
 				}
+			}
 				
 				updateScores();
 
@@ -246,7 +247,6 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 				//Will keep going round removing null values until there are no more null values
 				while(event.getDrops().remove(null)){
 				}
-			}
 		}
 
 	}
@@ -610,7 +610,7 @@ public final class WolvesVSPigs extends JavaPlugin implements Listener{
 		if (!(wolves == null)){
 		w.setScore(wolves.getSize());
 		}
-		else if (!(pigs == null)){
+		if (!(pigs == null)){
 		p.setScore(pigs.getSize());
 		}
 		
